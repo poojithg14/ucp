@@ -271,6 +271,35 @@ This convention ensures:
 - **Verifiable**: Build-time checks can confirm each `extends` entry has a
     matching `$defs` key
 
+##### Protocol Version Constraint
+
+Extension schemas **SHOULD** declare a `min_protocol_version` field
+(alongside `name`, `title`, `description`) to indicate the minimum
+UCP protocol version required by the extension:
+
+```json
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://acme.com/ucp/schemas/loyalty.json",
+  "name": "com.acme.shopping.loyalty",
+  "title": "Acme Loyalty Points",
+  "min_protocol_version": "2026-01-23",
+  "$defs": { ... }
+}
+```
+
+The schema author — not the profile publisher — declares the minimum
+protocol version requirement. The profile publisher selects and
+advertises compatible versions in their profile.
+
+If `min_protocol_version` is present, platforms and businesses
+**SHOULD** verify the negotiated protocol version is >=
+`min_protocol_version` during schema resolution. Incompatible
+extensions are excluded from the active capability set (see
+[Resolution Flow](#resolution-flow)). If absent, the extension is
+assumed to be compatible with the protocol version declared by the
+profile.
+
 #### Schema Resolution Convention
 
 To validate payloads, implementations resolve extension schemas as follows:
@@ -293,8 +322,13 @@ Platforms **MUST** resolve schemas following this sequence:
 2. **Negotiation**: Compute capability intersection (see
     [Intersection Algorithm](#intersection-algorithm))
 3. **Schema Fetch**: Fetch base schema and all active extension schemas
-4. **Compose**: Merge schemas via `allOf` chains based on active extensions
-5. **Validate**: Validate requests and responses against the composed schema
+4. **Protocol Compatibility**: For each fetched extension
+    schema, if `min_protocol_version` is present, verify the negotiated
+    protocol version >= that value. Exclude incompatible capabilities and
+    re-prune orphaned extensions (steps 3-4 of the
+    [Intersection Algorithm](#intersection-algorithm))
+5. **Compose**: Merge schemas via `allOf` chains based on active extensions
+6. **Validate**: Validate requests and responses against the composed schema
 
 ### Profile Structure
 
@@ -1716,7 +1750,7 @@ and signing keys. When `supported_versions` is omitted, only
   "ucp": {
     "version": "2026-01-23",
     "supported_versions": {
-      "2026-01-11": "/.well-known/ucp/2026-01-11"
+      "2026-01-11": "https://business.example.com/.well-known/ucp/2026-01-11"
     }
   }
 }

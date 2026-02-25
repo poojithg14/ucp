@@ -131,7 +131,7 @@
               "propertyNames": { "$ref": "#/$defs/version" },
               "additionalProperties": {
                 "type": "string",
-                "format": "uri-reference"
+                "format": "uri"
               }
             },
             "services": {
