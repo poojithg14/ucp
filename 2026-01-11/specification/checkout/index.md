@@ -193,7 +193,7 @@ A stateless URL that encodes checkout state directly, allowing reconstruction wi
 
 | Name         | Type                                                                                  | Required | Description                                                                                                                                                                                                                                                     |
 | ------------ | ------------------------------------------------------------------------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| ucp          | [UCP Response Checkout](/2026-01-11/specification/checkout/#ucp-response-checkout)    | **Yes**  |                                                                                                                                                                                                                                                                 |
+| ucp          | [UCP Response Checkout](/2026-01-11/specification/checkout/#ucp-response-checkout)    | **Yes**  | Protocol metadata for discovery profiles and responses. Uses slim schema pattern with context-specific required fields.                                                                                                                                         |
 | id           | string                                                                                | **Yes**  | Unique identifier of the checkout session.                                                                                                                                                                                                                      |
 | line_items   | Array\[[Line Item Response](/2026-01-11/specification/checkout/#line-item-response)\] | **Yes**  | List of line items being checked out.                                                                                                                                                                                                                           |
 | buyer        | [Buyer](/2026-01-11/specification/checkout/#buyer)                                    | No       | Representation of the buyer.                                                                                                                                                                                                                                    |
@@ -204,7 +204,7 @@ A stateless URL that encodes checkout state directly, allowing reconstruction wi
 | links        | Array\[[Link](/2026-01-11/specification/checkout/#link)\]                             | **Yes**  | Links to be displayed by the platform (Privacy Policy, TOS). Mandatory for legal compliance.                                                                                                                                                                    |
 | expires_at   | string                                                                                | No       | RFC 3339 expiry timestamp. Default TTL is 6 hours from creation if not sent.                                                                                                                                                                                    |
 | continue_url | string                                                                                | No       | URL for checkout handoff and session recovery. MUST be provided when status is requires_escalation. See specification for format and availability requirements.                                                                                                 |
-| payment      | [Payment Response](/2026-01-11/specification/checkout/#payment-response)              | **Yes**  |                                                                                                                                                                                                                                                                 |
+| payment      | [Payment](/2026-01-11/specification/checkout/#payment)                                | **Yes**  | Payment configuration containing handlers.                                                                                                                                                                                                                      |
 | order        | [Order Confirmation](/2026-01-11/specification/checkout/#order-confirmation)          | No       | Details about an order created for this checkout session.                                                                                                                                                                                                       |
 
 ## Operations
@@ -227,18 +227,18 @@ To be invoked by the platform when the user has expressed purchase intent (e.g.,
 
 **Inputs**
 
-| Name       | Type                                                                                              | Required | Description                           |
-| ---------- | ------------------------------------------------------------------------------------------------- | -------- | ------------------------------------- |
-| line_items | Array\[[Line Item Create Request](/2026-01-11/specification/checkout/#line-item-create-request)\] | **Yes**  | List of line items being checked out. |
-| buyer      | [Buyer](/2026-01-11/specification/checkout/#buyer)                                                | No       | Representation of the buyer.          |
-| currency   | string                                                                                            | **Yes**  | ISO 4217 currency code.               |
-| payment    | [Payment Create Request](/2026-01-11/specification/checkout/#payment-create-request)              | **Yes**  |                                       |
+| Name       | Type                                                                | Required | Description                                |
+| ---------- | ------------------------------------------------------------------- | -------- | ------------------------------------------ |
+| line_items | Array\[[Line Item](/2026-01-11/specification/checkout/#line-item)\] | **Yes**  | List of line items being checked out.      |
+| buyer      | [Buyer](/2026-01-11/specification/checkout/#buyer)                  | No       | Representation of the buyer.               |
+| currency   | string                                                              | **Yes**  | ISO 4217 currency code.                    |
+| payment    | [Payment](/2026-01-11/specification/checkout/#payment)              | **Yes**  | Payment configuration containing handlers. |
 
 **Output**
 
 | Name         | Type                                                                                  | Required | Description                                                                                                                                                                                                                                                     |
 | ------------ | ------------------------------------------------------------------------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| ucp          | [UCP Response Checkout](/2026-01-11/specification/checkout/#ucp-response-checkout)    | **Yes**  |                                                                                                                                                                                                                                                                 |
+| ucp          | [UCP Response Checkout](/2026-01-11/specification/checkout/#ucp-response-checkout)    | **Yes**  | Protocol metadata for discovery profiles and responses. Uses slim schema pattern with context-specific required fields.                                                                                                                                         |
 | id           | string                                                                                | **Yes**  | Unique identifier of the checkout session.                                                                                                                                                                                                                      |
 | line_items   | Array\[[Line Item Response](/2026-01-11/specification/checkout/#line-item-response)\] | **Yes**  | List of line items being checked out.                                                                                                                                                                                                                           |
 | buyer        | [Buyer](/2026-01-11/specification/checkout/#buyer)                                    | No       | Representation of the buyer.                                                                                                                                                                                                                                    |
@@ -249,7 +249,7 @@ To be invoked by the platform when the user has expressed purchase intent (e.g.,
 | links        | Array\[[Link](/2026-01-11/specification/checkout/#link)\]                             | **Yes**  | Links to be displayed by the platform (Privacy Policy, TOS). Mandatory for legal compliance.                                                                                                                                                                    |
 | expires_at   | string                                                                                | No       | RFC 3339 expiry timestamp. Default TTL is 6 hours from creation if not sent.                                                                                                                                                                                    |
 | continue_url | string                                                                                | No       | URL for checkout handoff and session recovery. MUST be provided when status is requires_escalation. See specification for format and availability requirements.                                                                                                 |
-| payment      | [Payment Response](/2026-01-11/specification/checkout/#payment-response)              | **Yes**  |                                                                                                                                                                                                                                                                 |
+| payment      | [Payment](/2026-01-11/specification/checkout/#payment)                                | **Yes**  | Payment configuration containing handlers.                                                                                                                                                                                                                      |
 | order        | [Order Confirmation](/2026-01-11/specification/checkout/#order-confirmation)          | No       | Details about an order created for this checkout session.                                                                                                                                                                                                       |
 
 ### Get Checkout
@@ -268,7 +268,7 @@ The platform will honor the TTL provided by the business via `expires_at` at the
 
 | Name         | Type                                                                                  | Required | Description                                                                                                                                                                                                                                                     |
 | ------------ | ------------------------------------------------------------------------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| ucp          | [UCP Response Checkout](/2026-01-11/specification/checkout/#ucp-response-checkout)    | **Yes**  |                                                                                                                                                                                                                                                                 |
+| ucp          | [UCP Response Checkout](/2026-01-11/specification/checkout/#ucp-response-checkout)    | **Yes**  | Protocol metadata for discovery profiles and responses. Uses slim schema pattern with context-specific required fields.                                                                                                                                         |
 | id           | string                                                                                | **Yes**  | Unique identifier of the checkout session.                                                                                                                                                                                                                      |
 | line_items   | Array\[[Line Item Response](/2026-01-11/specification/checkout/#line-item-response)\] | **Yes**  | List of line items being checked out.                                                                                                                                                                                                                           |
 | buyer        | [Buyer](/2026-01-11/specification/checkout/#buyer)                                    | No       | Representation of the buyer.                                                                                                                                                                                                                                    |
@@ -279,7 +279,7 @@ The platform will honor the TTL provided by the business via `expires_at` at the
 | links        | Array\[[Link](/2026-01-11/specification/checkout/#link)\]                             | **Yes**  | Links to be displayed by the platform (Privacy Policy, TOS). Mandatory for legal compliance.                                                                                                                                                                    |
 | expires_at   | string                                                                                | No       | RFC 3339 expiry timestamp. Default TTL is 6 hours from creation if not sent.                                                                                                                                                                                    |
 | continue_url | string                                                                                | No       | URL for checkout handoff and session recovery. MUST be provided when status is requires_escalation. See specification for format and availability requirements.                                                                                                 |
-| payment      | [Payment Response](/2026-01-11/specification/checkout/#payment-response)              | **Yes**  |                                                                                                                                                                                                                                                                 |
+| payment      | [Payment](/2026-01-11/specification/checkout/#payment)                                | **Yes**  | Payment configuration containing handlers.                                                                                                                                                                                                                      |
 | order        | [Order Confirmation](/2026-01-11/specification/checkout/#order-confirmation)          | No       | Details about an order created for this checkout session.                                                                                                                                                                                                       |
 
 ### Update Checkout
@@ -288,20 +288,20 @@ Performs a full replacement of the checkout resource. The platform is **REQUIRED
 
 **Inputs**
 
-| Name       | Type                                                                                              | Required | Description                                                    |
-| ---------- | ------------------------------------------------------------------------------------------------- | -------- | -------------------------------------------------------------- |
-| id         | string                                                                                            | **Yes**  | The unique identifier of the checkout session.Defined in path. |
-| id         | string                                                                                            | **Yes**  | Unique identifier of the checkout session.                     |
-| line_items | Array\[[Line Item Update Request](/2026-01-11/specification/checkout/#line-item-update-request)\] | **Yes**  | List of line items being checked out.                          |
-| buyer      | [Buyer](/2026-01-11/specification/checkout/#buyer)                                                | No       | Representation of the buyer.                                   |
-| currency   | string                                                                                            | **Yes**  | ISO 4217 currency code.                                        |
-| payment    | [Payment Update Request](/2026-01-11/specification/checkout/#payment-update-request)              | **Yes**  |                                                                |
+| Name       | Type                                                                | Required | Description                                                    |
+| ---------- | ------------------------------------------------------------------- | -------- | -------------------------------------------------------------- |
+| id         | string                                                              | **Yes**  | The unique identifier of the checkout session.Defined in path. |
+| id         | string                                                              | **Yes**  | Unique identifier of the checkout session.                     |
+| line_items | Array\[[Line Item](/2026-01-11/specification/checkout/#line-item)\] | **Yes**  | List of line items being checked out.                          |
+| buyer      | [Buyer](/2026-01-11/specification/checkout/#buyer)                  | No       | Representation of the buyer.                                   |
+| currency   | string                                                              | **Yes**  | ISO 4217 currency code.                                        |
+| payment    | [Payment](/2026-01-11/specification/checkout/#payment)              | **Yes**  | Payment configuration containing handlers.                     |
 
 **Output**
 
 | Name         | Type                                                                                  | Required | Description                                                                                                                                                                                                                                                     |
 | ------------ | ------------------------------------------------------------------------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| ucp          | [UCP Response Checkout](/2026-01-11/specification/checkout/#ucp-response-checkout)    | **Yes**  |                                                                                                                                                                                                                                                                 |
+| ucp          | [UCP Response Checkout](/2026-01-11/specification/checkout/#ucp-response-checkout)    | **Yes**  | Protocol metadata for discovery profiles and responses. Uses slim schema pattern with context-specific required fields.                                                                                                                                         |
 | id           | string                                                                                | **Yes**  | Unique identifier of the checkout session.                                                                                                                                                                                                                      |
 | line_items   | Array\[[Line Item Response](/2026-01-11/specification/checkout/#line-item-response)\] | **Yes**  | List of line items being checked out.                                                                                                                                                                                                                           |
 | buyer        | [Buyer](/2026-01-11/specification/checkout/#buyer)                                    | No       | Representation of the buyer.                                                                                                                                                                                                                                    |
@@ -312,7 +312,7 @@ Performs a full replacement of the checkout resource. The platform is **REQUIRED
 | links        | Array\[[Link](/2026-01-11/specification/checkout/#link)\]                             | **Yes**  | Links to be displayed by the platform (Privacy Policy, TOS). Mandatory for legal compliance.                                                                                                                                                                    |
 | expires_at   | string                                                                                | No       | RFC 3339 expiry timestamp. Default TTL is 6 hours from creation if not sent.                                                                                                                                                                                    |
 | continue_url | string                                                                                | No       | URL for checkout handoff and session recovery. MUST be provided when status is requires_escalation. See specification for format and availability requirements.                                                                                                 |
-| payment      | [Payment Response](/2026-01-11/specification/checkout/#payment-response)              | **Yes**  |                                                                                                                                                                                                                                                                 |
+| payment      | [Payment](/2026-01-11/specification/checkout/#payment)                                | **Yes**  | Payment configuration containing handlers.                                                                                                                                                                                                                      |
 | order        | [Order Confirmation](/2026-01-11/specification/checkout/#order-confirmation)          | No       | Details about an order created for this checkout session.                                                                                                                                                                                                       |
 
 ### Complete Checkout
@@ -326,14 +326,14 @@ After this call, other details will be updated through subsequent events as the 
 | Name         | Type                                                                         | Required | Description                                                    |
 | ------------ | ---------------------------------------------------------------------------- | -------- | -------------------------------------------------------------- |
 | id           | string                                                                       | **Yes**  | The unique identifier of the checkout session.Defined in path. |
-| payment_data | [Payment Instrument](/2026-01-11/specification/checkout/#payment-instrument) | **Yes**  |                                                                |
+| payment_data | [Payment Instrument](/2026-01-11/specification/checkout/#payment-instrument) | **Yes**  | Matches a specific instrument type based on validation logic.  |
 | risk_signals | object                                                                       | No       | Key-value pairs of risk signals.                               |
 
 **Output**
 
 | Name         | Type                                                                                  | Required | Description                                                                                                                                                                                                                                                     |
 | ------------ | ------------------------------------------------------------------------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| ucp          | [UCP Response Checkout](/2026-01-11/specification/checkout/#ucp-response-checkout)    | **Yes**  |                                                                                                                                                                                                                                                                 |
+| ucp          | [UCP Response Checkout](/2026-01-11/specification/checkout/#ucp-response-checkout)    | **Yes**  | Protocol metadata for discovery profiles and responses. Uses slim schema pattern with context-specific required fields.                                                                                                                                         |
 | id           | string                                                                                | **Yes**  | Unique identifier of the checkout session.                                                                                                                                                                                                                      |
 | line_items   | Array\[[Line Item Response](/2026-01-11/specification/checkout/#line-item-response)\] | **Yes**  | List of line items being checked out.                                                                                                                                                                                                                           |
 | buyer        | [Buyer](/2026-01-11/specification/checkout/#buyer)                                    | No       | Representation of the buyer.                                                                                                                                                                                                                                    |
@@ -344,7 +344,7 @@ After this call, other details will be updated through subsequent events as the 
 | links        | Array\[[Link](/2026-01-11/specification/checkout/#link)\]                             | **Yes**  | Links to be displayed by the platform (Privacy Policy, TOS). Mandatory for legal compliance.                                                                                                                                                                    |
 | expires_at   | string                                                                                | No       | RFC 3339 expiry timestamp. Default TTL is 6 hours from creation if not sent.                                                                                                                                                                                    |
 | continue_url | string                                                                                | No       | URL for checkout handoff and session recovery. MUST be provided when status is requires_escalation. See specification for format and availability requirements.                                                                                                 |
-| payment      | [Payment Response](/2026-01-11/specification/checkout/#payment-response)              | **Yes**  |                                                                                                                                                                                                                                                                 |
+| payment      | [Payment](/2026-01-11/specification/checkout/#payment)                                | **Yes**  | Payment configuration containing handlers.                                                                                                                                                                                                                      |
 | order        | [Order Confirmation](/2026-01-11/specification/checkout/#order-confirmation)          | No       | Details about an order created for this checkout session.                                                                                                                                                                                                       |
 
 ### Cancel Checkout
@@ -361,7 +361,7 @@ This operation will be used to cancel a checkout session, if it can be canceled.
 
 | Name         | Type                                                                                  | Required | Description                                                                                                                                                                                                                                                     |
 | ------------ | ------------------------------------------------------------------------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| ucp          | [UCP Response Checkout](/2026-01-11/specification/checkout/#ucp-response-checkout)    | **Yes**  |                                                                                                                                                                                                                                                                 |
+| ucp          | [UCP Response Checkout](/2026-01-11/specification/checkout/#ucp-response-checkout)    | **Yes**  | Protocol metadata for discovery profiles and responses. Uses slim schema pattern with context-specific required fields.                                                                                                                                         |
 | id           | string                                                                                | **Yes**  | Unique identifier of the checkout session.                                                                                                                                                                                                                      |
 | line_items   | Array\[[Line Item Response](/2026-01-11/specification/checkout/#line-item-response)\] | **Yes**  | List of line items being checked out.                                                                                                                                                                                                                           |
 | buyer        | [Buyer](/2026-01-11/specification/checkout/#buyer)                                    | No       | Representation of the buyer.                                                                                                                                                                                                                                    |
@@ -372,7 +372,7 @@ This operation will be used to cancel a checkout session, if it can be canceled.
 | links        | Array\[[Link](/2026-01-11/specification/checkout/#link)\]                             | **Yes**  | Links to be displayed by the platform (Privacy Policy, TOS). Mandatory for legal compliance.                                                                                                                                                                    |
 | expires_at   | string                                                                                | No       | RFC 3339 expiry timestamp. Default TTL is 6 hours from creation if not sent.                                                                                                                                                                                    |
 | continue_url | string                                                                                | No       | URL for checkout handoff and session recovery. MUST be provided when status is requires_escalation. See specification for format and availability requirements.                                                                                                 |
-| payment      | [Payment Response](/2026-01-11/specification/checkout/#payment-response)              | **Yes**  |                                                                                                                                                                                                                                                                 |
+| payment      | [Payment](/2026-01-11/specification/checkout/#payment)                                | **Yes**  | Payment configuration containing handlers.                                                                                                                                                                                                                      |
 | order        | [Order Confirmation](/2026-01-11/specification/checkout/#order-confirmation)          | No       | Details about an order created for this checkout session.                                                                                                                                                                                                       |
 
 ## Transport Bindings
@@ -398,15 +398,15 @@ The abstract operations above are bound to specific transport protocols as defin
 
 ### Fulfillment Option
 
-| Name                      | Type                                                                          | Required | Description                                                                |
-| ------------------------- | ----------------------------------------------------------------------------- | -------- | -------------------------------------------------------------------------- |
-| id                        | string                                                                        | **Yes**  | Unique fulfillment option identifier.                                      |
-| title                     | string                                                                        | **Yes**  | Short label (e.g., 'Express Shipping', 'Curbside Pickup').                 |
-| description               | string                                                                        | No       | Complete context for buyer decision (e.g., 'Arrives Dec 12-15 via FedEx'). |
-| carrier                   | string                                                                        | No       | Carrier name (for shipping).                                               |
-| earliest_fulfillment_time | string                                                                        | No       | Earliest fulfillment date.                                                 |
-| latest_fulfillment_time   | string                                                                        | No       | Latest fulfillment date.                                                   |
-| totals                    | Array\[[Total Response](/2026-01-11/specification/checkout/#total-response)\] | **Yes**  | Fulfillment option totals breakdown.                                       |
+| Name                      | Type          | Required | Description                                                                |
+| ------------------------- | ------------- | -------- | -------------------------------------------------------------------------- |
+| id                        | string        | **Yes**  | Unique fulfillment option identifier.                                      |
+| title                     | string        | **Yes**  | Short label (e.g., 'Express Shipping', 'Curbside Pickup').                 |
+| description               | string        | No       | Complete context for buyer decision (e.g., 'Arrives Dec 12-15 via FedEx'). |
+| carrier                   | string        | No       | Carrier name (for shipping).                                               |
+| earliest_fulfillment_time | string        | No       | Earliest fulfillment date.                                                 |
+| latest_fulfillment_time   | string        | No       | Latest fulfillment date.                                                   |
+| totals                    | Array[object] | **Yes**  | Fulfillment option totals breakdown.                                       |
 
 ### Item
 
@@ -435,29 +435,29 @@ The abstract operations above are bound to specific transport protocols as defin
 
 #### Line Item Create Request
 
-| Name     | Type                                                                           | Required | Description                           |
-| -------- | ------------------------------------------------------------------------------ | -------- | ------------------------------------- |
-| item     | [Item Create Request](/2026-01-11/specification/checkout/#item-create-request) | **Yes**  |                                       |
-| quantity | integer                                                                        | **Yes**  | Quantity of the item being purchased. |
+| Name     | Type                                             | Required | Description                           |
+| -------- | ------------------------------------------------ | -------- | ------------------------------------- |
+| item     | [Item](/2026-01-11/specification/checkout/#item) | **Yes**  |                                       |
+| quantity | integer                                          | **Yes**  | Quantity of the item being purchased. |
 
 #### Line Item Update Request
 
-| Name      | Type                                                                           | Required | Description                                            |
-| --------- | ------------------------------------------------------------------------------ | -------- | ------------------------------------------------------ |
-| id        | string                                                                         | No       |                                                        |
-| item      | [Item Update Request](/2026-01-11/specification/checkout/#item-update-request) | **Yes**  |                                                        |
-| quantity  | integer                                                                        | **Yes**  | Quantity of the item being purchased.                  |
-| parent_id | string                                                                         | No       | Parent line item identifier for any nested structures. |
+| Name      | Type                                             | Required | Description                                            |
+| --------- | ------------------------------------------------ | -------- | ------------------------------------------------------ |
+| id        | string                                           | No       |                                                        |
+| item      | [Item](/2026-01-11/specification/checkout/#item) | **Yes**  |                                                        |
+| quantity  | integer                                          | **Yes**  | Quantity of the item being purchased.                  |
+| parent_id | string                                           | No       | Parent line item identifier for any nested structures. |
 
 #### Line Item Response
 
-| Name      | Type                                                                          | Required | Description                                            |
-| --------- | ----------------------------------------------------------------------------- | -------- | ------------------------------------------------------ |
-| id        | string                                                                        | **Yes**  |                                                        |
-| item      | [Item Response](/2026-01-11/specification/checkout/#item-response)            | **Yes**  |                                                        |
-| quantity  | integer                                                                       | **Yes**  | Quantity of the item being purchased.                  |
-| totals    | Array\[[Total Response](/2026-01-11/specification/checkout/#total-response)\] | **Yes**  | Line item totals breakdown.                            |
-| parent_id | string                                                                        | No       | Parent line item identifier for any nested structures. |
+| Name      | Type                                                        | Required | Description                                            |
+| --------- | ----------------------------------------------------------- | -------- | ------------------------------------------------------ |
+| id        | string                                                      | **Yes**  |                                                        |
+| item      | [Item](/2026-01-11/specification/checkout/#item)            | **Yes**  |                                                        |
+| quantity  | integer                                                     | **Yes**  | Quantity of the item being purchased.                  |
+| totals    | Array\[[Total](/2026-01-11/specification/checkout/#total)\] | **Yes**  | Line item totals breakdown.                            |
+| parent_id | string                                                      | No       | Parent line item identifier for any nested structures. |
 
 ### Link
 
@@ -562,9 +562,10 @@ This object MUST be one of the following types: [Card Payment Instrument](/2026-
 | --------------------- | ---------------------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | id                    | string                                                                       | **Yes**  | A unique identifier for this instrument instance, assigned by the Agent. Used to reference this specific instrument in the 'payment.selected_instrument_id' field. |
 | handler_id            | string                                                                       | **Yes**  | The unique identifier for the handler instance that produced this instrument. This corresponds to the 'id' field in the Payment Handler definition.                |
-| type                  | string                                                                       | **Yes**  | **Constant = card**. Indicates this is a card payment instrument.                                                                                                  |
+| type                  | string                                                                       | **Yes**  | The broad category of the instrument (e.g., 'card', 'tokenized_card'). Specific schemas will constrain this to a constant value.                                   |
 | billing_address       | [Postal Address](/2026-01-11/specification/checkout/#postal-address)         | No       | The billing address associated with this payment method.                                                                                                           |
-| credential            | [Payment Credential](/2026-01-11/specification/checkout/#payment-credential) | No       |                                                                                                                                                                    |
+| credential            | [Payment Credential](/2026-01-11/specification/checkout/#payment-credential) | No       | Container for sensitive payment data. Use the specific schema matching the 'type' field.                                                                           |
+| type                  | string                                                                       | **Yes**  | **Constant = card**. Indicates this is a card payment instrument.                                                                                                  |
 | brand                 | string                                                                       | **Yes**  | The card brand/network (e.g., visa, mastercard, amex).                                                                                                             |
 | last_digits           | string                                                                       | **Yes**  | Last 4 digits of the card number.                                                                                                                                  |
 | expiry_month          | integer                                                                      | No       | The month of the card's expiration date (1-12).                                                                                                                    |
@@ -574,7 +575,7 @@ This object MUST be one of the following types: [Card Payment Instrument](/2026-
 
 ### Payment Credential
 
-This object MUST be one of the following types: [Token Credential Response](/2026-01-11/specification/checkout/#token-credential-response), [Card Credential](/2026-01-11/specification/checkout/#card-credential).
+This object MUST be one of the following types: [Token Credential](/2026-01-11/specification/checkout/#token-credential), [Card Credential](/2026-01-11/specification/checkout/#card-credential).
 
 ### Token Credential Response
 
@@ -635,10 +636,10 @@ This object MUST be one of the following types: [Token Credential Response](/202
 
 ### UCP Response Checkout
 
-| Name         | Type                                                              | Required | Description                                |
-| ------------ | ----------------------------------------------------------------- | -------- | ------------------------------------------ |
-| version      | string                                                            | **Yes**  | UCP protocol version in YYYY-MM-DD format. |
-| capabilities | Array\[[Response](/2026-01-11/specification/checkout/#response)\] | **Yes**  | Active capabilities for this response.     |
+| Name         | Type       | Required | Description                                |
+| ------------ | ---------- | -------- | ------------------------------------------ |
+| version      | string     | **Yes**  | UCP protocol version in YYYY-MM-DD format. |
+| capabilities | Array[any] | **Yes**  | Active capabilities for this response.     |
 
 ### Order Confirmation
 

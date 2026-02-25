@@ -2539,7 +2539,7 @@ redirect to the checkout UI or renders the checkout page directly.</p>
 <td style="text-align: left;">ucp</td>
 <td style="text-align: left;"><a href="/2026-01-11/specification/checkout/#ucp-response-checkout">UCP Response Checkout</a></td>
 <td style="text-align: left;"><strong>Yes</strong></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Protocol metadata for discovery profiles and responses. Uses slim schema pattern with context-specific required fields.</td>
 </tr>
 <tr>
 <td style="text-align: left;">id</td>
@@ -2603,9 +2603,9 @@ redirect to the checkout UI or renders the checkout page directly.</p>
 </tr>
 <tr>
 <td style="text-align: left;">payment</td>
-<td style="text-align: left;"><a href="/2026-01-11/specification/checkout/#payment-response">Payment Response</a></td>
+<td style="text-align: left;"><a href="/2026-01-11/specification/checkout/#payment">Payment</a></td>
 <td style="text-align: left;"><strong>Yes</strong></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Payment configuration containing handlers.</td>
 </tr>
 <tr>
 <td style="text-align: left;">order</td>
@@ -2666,7 +2666,7 @@ product data (price/title etc.) provided by the business through the feeds
 <tbody>
 <tr>
 <td style="text-align: left;">line_items</td>
-<td style="text-align: left;">Array[<a href="/2026-01-11/specification/checkout/#line-item-create-request">Line Item Create Request</a>]</td>
+<td style="text-align: left;">Array[<a href="/2026-01-11/specification/checkout/#line-item">Line Item</a>]</td>
 <td style="text-align: left;"><strong>Yes</strong></td>
 <td style="text-align: left;">List of line items being checked out.</td>
 </tr>
@@ -2684,9 +2684,9 @@ product data (price/title etc.) provided by the business through the feeds
 </tr>
 <tr>
 <td style="text-align: left;">payment</td>
-<td style="text-align: left;"><a href="/2026-01-11/specification/checkout/#payment-create-request">Payment Create Request</a></td>
+<td style="text-align: left;"><a href="/2026-01-11/specification/checkout/#payment">Payment</a></td>
 <td style="text-align: left;"><strong>Yes</strong></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Payment configuration containing handlers.</td>
 </tr>
 </tbody>
 </table>
@@ -2705,7 +2705,7 @@ product data (price/title etc.) provided by the business through the feeds
 <td style="text-align: left;">ucp</td>
 <td style="text-align: left;"><a href="/2026-01-11/specification/checkout/#ucp-response-checkout">UCP Response Checkout</a></td>
 <td style="text-align: left;"><strong>Yes</strong></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Protocol metadata for discovery profiles and responses. Uses slim schema pattern with context-specific required fields.</td>
 </tr>
 <tr>
 <td style="text-align: left;">id</td>
@@ -2769,9 +2769,9 @@ product data (price/title etc.) provided by the business through the feeds
 </tr>
 <tr>
 <td style="text-align: left;">payment</td>
-<td style="text-align: left;"><a href="/2026-01-11/specification/checkout/#payment-response">Payment Response</a></td>
+<td style="text-align: left;"><a href="/2026-01-11/specification/checkout/#payment">Payment</a></td>
 <td style="text-align: left;"><strong>Yes</strong></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Payment configuration containing handlers.</td>
 </tr>
 <tr>
 <td style="text-align: left;">order</td>
@@ -2823,7 +2823,7 @@ time of checkout session creation.</p>
 <td style="text-align: left;">ucp</td>
 <td style="text-align: left;"><a href="/2026-01-11/specification/checkout/#ucp-response-checkout">UCP Response Checkout</a></td>
 <td style="text-align: left;"><strong>Yes</strong></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Protocol metadata for discovery profiles and responses. Uses slim schema pattern with context-specific required fields.</td>
 </tr>
 <tr>
 <td style="text-align: left;">id</td>
@@ -2887,9 +2887,9 @@ time of checkout session creation.</p>
 </tr>
 <tr>
 <td style="text-align: left;">payment</td>
-<td style="text-align: left;"><a href="/2026-01-11/specification/checkout/#payment-response">Payment Response</a></td>
+<td style="text-align: left;"><a href="/2026-01-11/specification/checkout/#payment">Payment</a></td>
 <td style="text-align: left;"><strong>Yes</strong></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Payment configuration containing handlers.</td>
 </tr>
 <tr>
 <td style="text-align: left;">order</td>
@@ -2929,7 +2929,7 @@ will replace the existing checkout session state on the business side.</p>
 </tr>
 <tr>
 <td style="text-align: left;">line_items</td>
-<td style="text-align: left;">Array[<a href="/2026-01-11/specification/checkout/#line-item-update-request">Line Item Update Request</a>]</td>
+<td style="text-align: left;">Array[<a href="/2026-01-11/specification/checkout/#line-item">Line Item</a>]</td>
 <td style="text-align: left;"><strong>Yes</strong></td>
 <td style="text-align: left;">List of line items being checked out.</td>
 </tr>
@@ -2947,9 +2947,9 @@ will replace the existing checkout session state on the business side.</p>
 </tr>
 <tr>
 <td style="text-align: left;">payment</td>
-<td style="text-align: left;"><a href="/2026-01-11/specification/checkout/#payment-update-request">Payment Update Request</a></td>
+<td style="text-align: left;"><a href="/2026-01-11/specification/checkout/#payment">Payment</a></td>
 <td style="text-align: left;"><strong>Yes</strong></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Payment configuration containing handlers.</td>
 </tr>
 </tbody>
 </table>
@@ -2968,7 +2968,7 @@ will replace the existing checkout session state on the business side.</p>
 <td style="text-align: left;">ucp</td>
 <td style="text-align: left;"><a href="/2026-01-11/specification/checkout/#ucp-response-checkout">UCP Response Checkout</a></td>
 <td style="text-align: left;"><strong>Yes</strong></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Protocol metadata for discovery profiles and responses. Uses slim schema pattern with context-specific required fields.</td>
 </tr>
 <tr>
 <td style="text-align: left;">id</td>
@@ -3032,9 +3032,9 @@ will replace the existing checkout session state on the business side.</p>
 </tr>
 <tr>
 <td style="text-align: left;">payment</td>
-<td style="text-align: left;"><a href="/2026-01-11/specification/checkout/#payment-response">Payment Response</a></td>
+<td style="text-align: left;"><a href="/2026-01-11/specification/checkout/#payment">Payment</a></td>
 <td style="text-align: left;"><strong>Yes</strong></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Payment configuration containing handlers.</td>
 </tr>
 <tr>
 <td style="text-align: left;">order</td>
@@ -3076,7 +3076,7 @@ as the order, and its associated items, moves through the supply chain.</p>
 <td style="text-align: left;">payment_data</td>
 <td style="text-align: left;"><a href="/2026-01-11/specification/checkout/#payment-instrument">Payment Instrument</a></td>
 <td style="text-align: left;"><strong>Yes</strong></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Matches a specific instrument type based on validation logic.</td>
 </tr>
 <tr>
 <td style="text-align: left;">risk_signals</td>
@@ -3101,7 +3101,7 @@ as the order, and its associated items, moves through the supply chain.</p>
 <td style="text-align: left;">ucp</td>
 <td style="text-align: left;"><a href="/2026-01-11/specification/checkout/#ucp-response-checkout">UCP Response Checkout</a></td>
 <td style="text-align: left;"><strong>Yes</strong></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Protocol metadata for discovery profiles and responses. Uses slim schema pattern with context-specific required fields.</td>
 </tr>
 <tr>
 <td style="text-align: left;">id</td>
@@ -3165,9 +3165,9 @@ as the order, and its associated items, moves through the supply chain.</p>
 </tr>
 <tr>
 <td style="text-align: left;">payment</td>
-<td style="text-align: left;"><a href="/2026-01-11/specification/checkout/#payment-response">Payment Response</a></td>
+<td style="text-align: left;"><a href="/2026-01-11/specification/checkout/#payment">Payment</a></td>
 <td style="text-align: left;"><strong>Yes</strong></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Payment configuration containing handlers.</td>
 </tr>
 <tr>
 <td style="text-align: left;">order</td>
@@ -3217,7 +3217,7 @@ that is not equal to <code>completed</code> or <code>canceled</code> <strong>SHO
 <td style="text-align: left;">ucp</td>
 <td style="text-align: left;"><a href="/2026-01-11/specification/checkout/#ucp-response-checkout">UCP Response Checkout</a></td>
 <td style="text-align: left;"><strong>Yes</strong></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Protocol metadata for discovery profiles and responses. Uses slim schema pattern with context-specific required fields.</td>
 </tr>
 <tr>
 <td style="text-align: left;">id</td>
@@ -3281,9 +3281,9 @@ that is not equal to <code>completed</code> or <code>canceled</code> <strong>SHO
 </tr>
 <tr>
 <td style="text-align: left;">payment</td>
-<td style="text-align: left;"><a href="/2026-01-11/specification/checkout/#payment-response">Payment Response</a></td>
+<td style="text-align: left;"><a href="/2026-01-11/specification/checkout/#payment">Payment</a></td>
 <td style="text-align: left;"><strong>Yes</strong></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Payment configuration containing handlers.</td>
 </tr>
 <tr>
 <td style="text-align: left;">order</td>
@@ -3395,7 +3395,7 @@ defined below:</p>
 </tr>
 <tr>
 <td style="text-align: left;">totals</td>
-<td style="text-align: left;">Array[<a href="/2026-01-11/specification/checkout/#total-response">Total Response</a>]</td>
+<td style="text-align: left;">Array[object]</td>
 <td style="text-align: left;"><strong>Yes</strong></td>
 <td style="text-align: left;">Fulfillment option totals breakdown.</td>
 </tr>
@@ -3491,7 +3491,7 @@ defined below:</p>
 <tbody>
 <tr>
 <td style="text-align: left;">item</td>
-<td style="text-align: left;"><a href="/2026-01-11/specification/checkout/#item-create-request">Item Create Request</a></td>
+<td style="text-align: left;"><a href="/2026-01-11/specification/checkout/#item">Item</a></td>
 <td style="text-align: left;"><strong>Yes</strong></td>
 <td style="text-align: left;"></td>
 </tr>
@@ -3522,7 +3522,7 @@ defined below:</p>
 </tr>
 <tr>
 <td style="text-align: left;">item</td>
-<td style="text-align: left;"><a href="/2026-01-11/specification/checkout/#item-update-request">Item Update Request</a></td>
+<td style="text-align: left;"><a href="/2026-01-11/specification/checkout/#item">Item</a></td>
 <td style="text-align: left;"><strong>Yes</strong></td>
 <td style="text-align: left;"></td>
 </tr>
@@ -3559,7 +3559,7 @@ defined below:</p>
 </tr>
 <tr>
 <td style="text-align: left;">item</td>
-<td style="text-align: left;"><a href="/2026-01-11/specification/checkout/#item-response">Item Response</a></td>
+<td style="text-align: left;"><a href="/2026-01-11/specification/checkout/#item">Item</a></td>
 <td style="text-align: left;"><strong>Yes</strong></td>
 <td style="text-align: left;"></td>
 </tr>
@@ -3571,7 +3571,7 @@ defined below:</p>
 </tr>
 <tr>
 <td style="text-align: left;">totals</td>
-<td style="text-align: left;">Array[<a href="/2026-01-11/specification/checkout/#total-response">Total Response</a>]</td>
+<td style="text-align: left;">Array[<a href="/2026-01-11/specification/checkout/#total">Total</a>]</td>
 <td style="text-align: left;"><strong>Yes</strong></td>
 <td style="text-align: left;">Line item totals breakdown.</td>
 </tr>
@@ -3953,7 +3953,7 @@ field or omitting them.</p>
 <td style="text-align: left;">type</td>
 <td style="text-align: left;">string</td>
 <td style="text-align: left;"><strong>Yes</strong></td>
-<td style="text-align: left;"><strong>Constant = card</strong>. Indicates this is a card payment instrument.</td>
+<td style="text-align: left;">The broad category of the instrument (e.g., 'card', 'tokenized_card'). Specific schemas will constrain this to a constant value.</td>
 </tr>
 <tr>
 <td style="text-align: left;">billing_address</td>
@@ -3965,7 +3965,13 @@ field or omitting them.</p>
 <td style="text-align: left;">credential</td>
 <td style="text-align: left;"><a href="/2026-01-11/specification/checkout/#payment-credential">Payment Credential</a></td>
 <td style="text-align: left;">No</td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Container for sensitive payment data. Use the specific schema matching the 'type' field.</td>
+</tr>
+<tr>
+<td style="text-align: left;">type</td>
+<td style="text-align: left;">string</td>
+<td style="text-align: left;"><strong>Yes</strong></td>
+<td style="text-align: left;"><strong>Constant = card</strong>. Indicates this is a card payment instrument.</td>
 </tr>
 <tr>
 <td style="text-align: left;">brand</td>
@@ -4006,7 +4012,7 @@ field or omitting them.</p>
 </tbody>
 </table>
 <h3 id="payment-credential">Payment Credential<a class="headerlink" href="#payment-credential" title="Permanent link">&para;</a></h3>
-<p>This object MUST be one of the following types: <a href="/2026-01-11/specification/checkout/#token-credential-response">Token Credential Response</a>, <a href="/2026-01-11/specification/checkout/#card-credential">Card Credential</a>.</p>
+<p>This object MUST be one of the following types: <a href="/2026-01-11/specification/checkout/#token-credential">Token Credential</a>, <a href="/2026-01-11/specification/checkout/#card-credential">Card Credential</a>.</p>
 <h3 id="token-credential-response">Token Credential Response<a class="headerlink" href="#token-credential-response" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -4272,7 +4278,7 @@ field or omitting them.</p>
 </tr>
 <tr>
 <td style="text-align: left;">capabilities</td>
-<td style="text-align: left;">Array[<a href="/2026-01-11/specification/checkout/#response">Response</a>]</td>
+<td style="text-align: left;">Array[any]</td>
 <td style="text-align: left;"><strong>Yes</strong></td>
 <td style="text-align: left;">Active capabilities for this response.</td>
 </tr>
