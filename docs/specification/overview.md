@@ -579,17 +579,23 @@ for a session:
 1. **Compute intersection**: For each business capability, include it in the
     result if a platform capability with the same `name` exists.
 
-2. **Prune orphaned extensions**: Remove any capability where `extends` is
+2. **Select version**: For each capability in the intersection, compute the
+    set of version strings present in **both** the business and platform
+    arrays. If the set is non-empty, select the **highest** version
+    (latest date). If the set is empty (no mutual version), **exclude** the
+    capability from the intersection.
+
+3. **Prune orphaned extensions**: Remove any capability where `extends` is
     set but **none** of its parent capabilities are in the intersection.
     - For single-parent extensions (`extends: "string"`): parent must be present
     - For multi-parent extensions (`extends: ["a", "b"]`): at least one parent
         must be present
 
-3. **Repeat pruning**: Continue step 2 until no more capabilities are removed
+4. **Repeat pruning**: Continue step 3 until no more capabilities are removed
     (handles transitive extension chains).
 
-The result is the set of capabilities both parties support, with extension
-dependencies satisfied.
+The result is the set of capabilities both parties support at mutually
+compatible versions, with extension dependencies satisfied.
 
 #### Error Handling
 
