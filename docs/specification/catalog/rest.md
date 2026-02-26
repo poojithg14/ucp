@@ -388,7 +388,7 @@ Business outcomes use the standard HTTP 200 status with messages in the response
 
 A conforming REST transport implementation **MUST**:
 
-1. Implement the `POST /catalog/search` endpoint with required `query` parameter.
+1. Implement the `POST /catalog/search` endpoint per [Catalog Search](search.md) capability requirements.
 2. Implement the `POST /catalog/lookup` endpoint per [Catalog Lookup](lookup.md) capability requirements.
 3. Return products with valid `Price` objects (amount + currency).
 4. Support cursor-based pagination with default limit of 10.

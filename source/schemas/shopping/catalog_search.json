@@ -9,7 +9,6 @@
   "$defs": {
     "search_request": {
       "type": "object",
-      "required": ["query"],
       "properties": {
         "query": {
           "type": "string",

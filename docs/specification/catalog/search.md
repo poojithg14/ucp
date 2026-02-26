@@ -25,7 +25,7 @@ queries, filtering by category and price, and pagination.
 
 | Operation | Description |
 | :--- | :--- |
-| **Search Catalog** | Search for products using query text and filters. |
+| **Search Catalog** | Search for products using provided inputs and filters. |
 
 ### Request
 
@@ -34,6 +34,18 @@ queries, filtering by category and price, and pagination.
 ### Response
 
 {{ extension_schema_fields('catalog_search.json#/$defs/search_response', 'catalog') }}
+
+## Search Inputs
+
+A valid search request MUST include at least one search input. The base
+capability defines `query` as the standard input. Extensions MAY define
+additional inputs (e.g., visual similarity, product references).
+
+Implementations MUST validate that incoming requests contain at least one
+recognized input and SHOULD reject empty or invalid requests with an appropriate error.
+Implementations define and enforce their own rules for input presence and
+content — for example, requiring `query`, rejecting empty `query` strings, or
+accepting extension-defined inputs as alternatives to `query`.
 
 ## Search Filters
 
