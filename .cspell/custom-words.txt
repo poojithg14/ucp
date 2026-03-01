@@ -87,6 +87,8 @@ superfences
 upsell
 upsells
 vulnz
+waivability
+waivable
 worktree
 yaml
 yml

@@ -79,13 +79,13 @@ object.
 
 Fees are distinct from other components of the order total:
 
-| Total Type    | Purpose                                    |
-| ------------- | ------------------------------------------ |
-| `subtotal`    | Sum of line item prices before adjustments |
-| `discount`    | Reductions applied via codes or promotions |
-| `fulfillment` | Shipping, delivery, or pickup costs        |
-| `tax`         | Government-imposed taxes                   |
-| `fee`         | Business-imposed surcharges and fees       |
+| Total Type    | Purpose                                                     |
+| ------------- | ----------------------------------------------------------- |
+| `subtotal`    | Sum of line item prices before adjustments                  |
+| `discount`    | Reductions applied via codes or promotions                  |
+| `fulfillment` | Shipping, delivery, or pickup costs                         |
+| `tax`         | Government-imposed taxes                                    |
+| `fee`         | Business-imposed surcharges and fees                        |
 | `total`       | Final amount: subtotal - discount + fulfillment + tax + fee |
 
 Fees represent charges imposed by the business (not the government). Unlike
