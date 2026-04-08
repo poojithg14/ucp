@@ -192,6 +192,9 @@ parameters from business-specific query parameters:
 
 - `ec_version` (string, **REQUIRED**): The UCP version for this session
     (format: `YYYY-MM-DD`). Must match the version from the checkout response.
+    The version is negotiated at session initialization and **MUST** remain
+    constant for the lifetime of the ECP session — neither party may change
+    the version after the handshake.
 - `ec_auth` (string, **OPTIONAL**): Authentication token in business-defined
     format
 - `ec_delegate` (string, **OPTIONAL**): Comma-delimited list of delegations
@@ -430,15 +433,40 @@ For requests (messages with `id`), receivers **MUST** respond with either:
 
 **Success Response:**
 
+All delegation success results **MUST** include the `ucp` envelope with
+`status: "success"`. The `version` **MUST** echo the `ec_version` negotiated
+during session initialization and confirmed by the host in the `ec.ready`
+response. The version is session-bound: once established during the handshake,
+it **MUST NOT** change for the duration of the ECP session. This provides
+explicit protocol-level confirmation and is the same envelope used by REST and
+MCP transports.
+
 ```json
-{ "jsonrpc": "2.0", "id": "...", "result": {...} }
+{
+  "jsonrpc": "2.0",
+  "id": "...",
+  "result": {
+    "ucp": { "version": "{{ ucp_version }}", "status": "success" },
+    "checkout": { ... }
+  }
+}
 ```
 
 **Error Response:**
 
 ```json
-{ "jsonrpc": "2.0", "id": "...", "error": {...} }
+{
+  "jsonrpc": "2.0",
+  "id": "...",
+  "result": {
+    "ucp": { "version": "{{ ucp_version }}", "status": "error" },
+    "messages": [...]
+  }
+}
 ```
+
+In both cases, `result.ucp.status` serves as the discriminator between success
+and error outcomes — the same pattern used across all UCP transports.
 
 ### Communication Channels
 
@@ -581,6 +609,11 @@ to complete the handshake.
 - **Direction:** host → Embedded Checkout
 - **Type:** Response
 - **Result Payload:**
+    - `ucp` (object, **REQUIRED**): UCP protocol metadata. The `version`
+        confirms the negotiated `ec_version` and `status` **MUST** be
+        `"success"`. This version is session-bound — the host explicitly
+        confirms the protocol version here, and it **MUST NOT** change for
+        the duration of the session.
     - `upgrade` (object, **OPTIONAL**): An object describing how the Embedded
         Checkout should update the communication channel it uses to communicate
         with the host. When present, host **MUST NOT** include `credential`
@@ -604,6 +637,7 @@ to complete the handshake.
     "jsonrpc": "2.0",
     "id": "ready_1",
     "result": {
+        "ucp": { "version": "{{ ucp_version }}", "status": "success" },
         "credential": "fake_identity_linking_oauth_token"
     }
 }
@@ -622,6 +656,7 @@ on the host's `iframe.contentWindow.postMessage()` call):
     "jsonrpc": "2.0",
     "id": "ready_1",
     "result": {
+        "ucp": { "version": "{{ ucp_version }}", "status": "success" },
         "upgrade": {
             "port": "[Transferable MessagePort]"
         }
@@ -647,6 +682,7 @@ information:**
     "jsonrpc": "2.0",
     "id": "ready_1",
     "result": {
+        "ucp": { "version": "{{ ucp_version }}", "status": "success" },
         "checkout": {
             "payment": {
                 // The instrument structure is defined by the handler's instrument schema
@@ -671,6 +707,34 @@ information:**
     }
 }
 ```
+
+**Example Error Response:**
+
+If the host cannot complete the handshake (e.g., origin validation failure or
+protocol state violation), it **MUST** respond with an `error_response` result:
+
+```json
+{
+    "jsonrpc": "2.0",
+    "id": "ready_1",
+    "result": {
+        "ucp": { "version": "{{ ucp_version }}", "status": "error" },
+        "messages": [
+            {
+                "type": "error",
+                "code": "security_error",
+                "content": "Host origin validation failed.",
+                "severity": "unrecoverable"
+            }
+        ]
+    }
+}
+```
+
+When the host responds with an error, the session cannot proceed. The host
+**MUST** tear down the embedded context and **MAY** redirect the buyer to
+`continue_url` if present. The Embedded Checkout **MUST NOT** send further
+messages after receiving a handshake error.
 
 ### Authentication
 
@@ -701,12 +765,13 @@ authorization to be provided by the host before the session continues.
 ```
 
 The `ec.auth` message is a request, which means that host
-**MUST** respond to exchange the authorization. The host **MUST** respond with either an error,
-or the authorization data requested by Embedded Checkout.
+**MUST** respond with a `result` containing either the authorization data
+or an `error_response`.
 
 - **Direction:** host → Embedded Checkout
 - **Type:** Response
 - **Result Payload:**
+    - `ucp` (object, **REQUIRED**): UCP protocol metadata with `status: "success"`.
     - `credential` (string, **REQUIRED**): The requested authorization data,
     can be in the form of an OAuth token, JWT, API keys, etc.
 
@@ -717,6 +782,7 @@ or the authorization data requested by Embedded Checkout.
     "jsonrpc": "2.0",
     "id": "auth_1",
     "result": {
+        "ucp": { "version": "{{ ucp_version }}", "status": "success" },
         "credential": "fake_identity_linking_oauth_token"
     }
 }
@@ -1159,6 +1225,7 @@ existing state.
 - **Direction:** host → Embedded Checkout
 - **Type:** Response
 - **Payload:**
+    - `ucp`: UCP protocol metadata with `status: "success"`
     - `checkout`: The update to apply to the checkout object
 
 **Example Success Response:**
@@ -1168,6 +1235,7 @@ existing state.
     "jsonrpc": "2.0",
     "id": "payment_instruments_change_request_1",
     "result": {
+        "ucp": { "version": "{{ ucp_version }}", "status": "success" },
         "checkout": {
             "payment": {
                 // The instrument structure is defined by the handler's instrument schema
@@ -1200,9 +1268,16 @@ existing state.
 {
     "jsonrpc": "2.0",
     "id": "payment_instruments_change_request_1",
-    "error": {
-        "code": "abort_error",
-        "message": "User closed the payment sheet without authorizing."
+    "result": {
+        "ucp": { "version": "{{ ucp_version }}", "status": "error" },
+        "messages": [
+            {
+                "type": "error",
+                "code": "abort_error",
+                "content": "User closed the payment sheet without authorizing.",
+                "severity": "recoverable"
+            }
+        ]
     }
 }
 ```
@@ -1254,6 +1329,7 @@ new data with existing state.
 - **Direction:** host → Embedded Checkout
 - **Type:** Response
 - **Payload:**
+    - `ucp`: UCP protocol metadata with `status: "success"`
     - `checkout`: The update to apply to the checkout object
 
 **Example Success Response:**
@@ -1263,6 +1339,7 @@ new data with existing state.
     "jsonrpc": "2.0",
     "id": "payment_credential_request_1",
     "result": {
+        "ucp": { "version": "{{ ucp_version }}", "status": "success" },
         "checkout": {
             "payment": {
                 "instruments": [
@@ -1298,9 +1375,16 @@ new data with existing state.
 {
     "jsonrpc": "2.0",
     "id": "payment_credential_request_1",
-    "error": {
-        "code": "abort_error",
-        "message": "User closed the payment sheet without authorizing."
+    "result": {
+        "ucp": { "version": "{{ ucp_version }}", "status": "error" },
+        "messages": [
+            {
+                "type": "error",
+                "code": "abort_error",
+                "content": "User closed the payment sheet without authorizing.",
+                "severity": "recoverable"
+            }
+        ]
     }
 }
 ```
@@ -1435,6 +1519,7 @@ rather than attempting to merge the new data with existing state.
 - **Direction:** host → Embedded Checkout
 - **Type:** Response
 - **Payload:**
+    - `ucp`: UCP protocol metadata with `status: "success"`
     - `checkout`: The update to apply to the checkout object
 
 **Example Success Response:**
@@ -1444,6 +1529,7 @@ rather than attempting to merge the new data with existing state.
     "jsonrpc": "2.0",
     "id": "fulfillment_address_change_request_1",
     "result": {
+        "ucp": { "version": "{{ ucp_version }}", "status": "success" },
         "checkout": {
             "fulfillment": {
                 "methods": [
@@ -1473,9 +1559,16 @@ rather than attempting to merge the new data with existing state.
 {
     "jsonrpc": "2.0",
     "id": "fulfillment_address_change_request_1",
-    "error": {
-        "code": "abort_error",
-        "message": "User cancelled address selection."
+    "result": {
+        "ucp": { "version": "{{ ucp_version }}", "status": "error" },
+        "messages": [
+            {
+                "type": "error",
+                "code": "abort_error",
+                "content": "User cancelled address selection.",
+                "severity": "recoverable"
+            }
+        ]
     }
 }
 ```
@@ -1564,7 +1657,8 @@ Requests the host to handle a link activated by the buyer within the checkout.
 
 - **Direction:** Host → Embedded Checkout
 - **Type:** Response
-- **Payload:** Empty object (`{}`).
+- **Payload:**
+    - `ucp`: UCP protocol metadata with `status: "success"`
 
 **Example Success Response:**
 
@@ -1572,7 +1666,9 @@ Requests the host to handle a link activated by the buyer within the checkout.
 {
     "jsonrpc": "2.0",
     "id": "window_1",
-    "result": {}
+    "result": {
+        "ucp": { "version": "{{ ucp_version }}", "status": "success" }
+    }
 }
 ```
 
@@ -1582,9 +1678,16 @@ Requests the host to handle a link activated by the buyer within the checkout.
 {
     "jsonrpc": "2.0",
     "id": "window_1",
-    "error": {
-        "code": "window_open_rejected_error",
-        "message": "Window open rejected by host."
+    "result": {
+        "ucp": { "version": "{{ ucp_version }}", "status": "error" },
+        "messages": [
+            {
+                "type": "error",
+                "code": "window_open_rejected_error",
+                "content": "Window open rejected by host.",
+                "severity": "unrecoverable"
+            }
+        ]
     }
 }
 ```
@@ -1593,20 +1696,29 @@ Requests the host to handle a link activated by the buyer within the checkout.
 
 ### Error Codes
 
-Responses to delegation request messages from the
-embedded checkout may resolve to errors. The message responder **SHOULD** use
-error codes mapped to
-**[W3C DOMException](https://webidl.spec.whatwg.org/#idl-DOMException)** names
-where possible.
+Delegation requests may result in errors. Errors **MUST** be returned using the
+standard UCP `error_response` shape within the `result` field — the same shape
+used by REST and MCP transports. For delegation exchanges, an error
+signals that the delegation failed but the session remains active —
+severity prescribes the recommended action.
 
-| Code                         | Description                                                                                                                                    |
-| :--------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------- |
-| `abort_error`                | The user cancelled the interaction (e.g., closed the sheet).                                                                                   |
-| `security_error`             | The host origin validation failed.                                                                                                             |
-| `not_supported_error`        | The requested payment method is not supported by the host.                                                                                     |
-| `invalid_state_error`        | Handshake was attempted out of order.                                                                                                          |
-| `not_allowed_error`          | The request was missing valid User Activation (see [Prevention of Unsolicited Payment Requests](#prevention-of-unsolicited-payment-requests)). |
-| `window_open_rejected_error` | Host policy prevented the navigation. The host **MAY** notify the buyer that their request was rejected.                                       |
+ECP defines the following error codes:
+
+| Code                         | Severity        | Description                                                                                                                                    |
+| :--------------------------- | :-------------- | :--------------------------------------------------------------------------------------------------------------------------------------------- |
+| `abort_error`                | `recoverable`   | The user cancelled the interaction (e.g., closed the sheet).                                                                                   |
+| `security_error`             | `unrecoverable` | The host origin validation failed.                                                                                                             |
+| `not_supported_error`        | `unrecoverable` | The requested payment method is not supported by the host.                                                                                     |
+| `invalid_state_error`        | `unrecoverable` | Handshake was attempted out of order.                                                                                                          |
+| `not_allowed_error`          | `recoverable`   | The request was missing valid User Activation (see [Prevention of Unsolicited Payment Requests](#prevention-of-unsolicited-payment-requests)). |
+| `window_open_rejected_error` | `unrecoverable` | Host policy prevented the navigation. The host **MAY** notify the buyer that their request was rejected.                                       |
+
+Delegation errors **SHOULD** use only `recoverable` and `unrecoverable`
+severities. `recoverable` means the delegation may be re-attempted.
+For `abort_error`, the buyer cancelled and may choose to try again.
+For `not_allowed_error`, recovery requires a new [user activation](https://html.spec.whatwg.org/multipage/interaction.html#activation)
+gesture before re-attempting the delegation. `unrecoverable` errors
+indicate the delegation cannot succeed in the current session.
 
 ### Security for Web-Based Hosts
 
